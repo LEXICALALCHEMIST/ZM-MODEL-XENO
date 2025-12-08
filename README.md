@@ -1,5 +1,4 @@
 # ZM-MODEL-XENO
-<<<<<<< HEAD
 
 ZM-MODEL-XENO
 Ephemeral Logic Core for NODE | OS
