@@ -1,4 +1,4 @@
-import { VOID_SYMBOL } from '../core/SacredSymbols.js';
+import { VOID_SYMBOL } from '../core/sacred9.js';
 
 export class Unit11{
   constructor() {

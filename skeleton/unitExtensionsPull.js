@@ -10,7 +10,7 @@ import { Unit9 } from './unit9.js';
 import { Unit10 } from './unit10.js';
 import { Unit11 } from './unit11.js';
 import { Unit12 } from './unit12.js';
-import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../core/SacredSymbols.js';
+import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../core/sacred9.js';
 
 export async function extendUnits() {
   class Unit1Pull extends Unit1 {

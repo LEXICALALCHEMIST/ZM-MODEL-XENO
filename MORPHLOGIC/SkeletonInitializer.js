@@ -1,8 +1,8 @@
-// ZMXENO/skeleton/SkeletonInitializer.js
-import { extendUnits as extendUnitsPush } from './unitExtensionsPush.js';
-import { extendUnits as extendUnitsPull } from './unitExtensionsPull.js';
+// ZMXENO/MorphLogic/SkeletonInitializer.js
+import { extendUnits as extendUnitsPush } from '../skeleton/unitExtensionsPush.js';
+import { extendUnits as extendUnitsPull } from '../skeleton/unitExtensionsPull.js';
 import CarryBus from '../core/CarryBus.js';
-import { S9, VOID } from '../core/sacred9.js';
+import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../core/sacred9.js';
 
 export default class SkeletonInitializer {
   constructor() {
@@ -15,9 +15,9 @@ export default class SkeletonInitializer {
     };
   }
 
-  async init(push = true) {
-    const { Unit1, Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, Unit12 } =
-      push ? await extendUnitsPush() : await extendUnitsPull();
+  async init(isPushOperation = true) {
+    const extendUnitsModule = isPushOperation ? extendUnitsPush : extendUnitsPull;
+    const { Unit1, Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, Unit12 } = await extendUnitsModule();
 
     this.units = [
       new Unit1(), new Unit2(), new Unit3(), new Unit4(),
@@ -25,20 +25,22 @@ export default class SkeletonInitializer {
       new Unit9(), new Unit10(), new Unit11(), new Unit12()
     ];
 
-    this.units.forEach(u => u.skeleton = this);
+    this.units.forEach(unit => { unit.skeleton = this; });
   }
 
-  async set(number, push = true) {
-    await this.init(push);
+  async set(number, isPushOperation = true) {
+    await this.init(isPushOperation);
 
-    if (number < 0 || number > 999999999999) throw new Error('Number out of range');
+    if (number < 0 || number > 999999999999) {
+      throw new Error('Number must be between 0 and 999,999,999,999');
+    }
 
-    const digits = number.toString().padStart(12, '0').slice(-12).split('').map(Number);
-    this.state.numberLength = number.toString().length || 1;
+    const digits = number.toString().split('').map(Number);
+    this.state.numberLength = digits.length || 1;
     this.state.activeUnitTarget = `u${this.state.numberLength}`;
 
     this.units.forEach((unit, i) => {
-      unit.state.currentSymbol = VOID;
+      unit.state.currentSymbol = VOID_SYMBOL;
       unit.state.carry = 0;
       unit.state.hasCollapsed = false;
       unit.state.pushes = [];
@@ -47,17 +49,18 @@ export default class SkeletonInitializer {
 
       const digit = digits[i];
       if (digit !== undefined) {
-        unit.state.currentSymbol = S9[digit];
+        unit.state.currentSymbol = SYMBOL_SEQUENCE[digit];
       }
     });
 
-    this.state.snapshot = JSON.parse(JSON.stringify(this.getState()));
-    return this.getState();
+    const state = this.getState();
+    this.state.snapshot = JSON.parse(JSON.stringify(state));
+    return state;
   }
 
   getState() {
     return {
-      units: this.units.map(u => u.getState()),
+      units: this.units.map(unit => unit.getState()),
       numberLength: this.state.numberLength,
       activeUnitTarget: this.state.activeUnitTarget
     };
