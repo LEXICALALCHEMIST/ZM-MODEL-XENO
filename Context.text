@@ -1,0 +1,144 @@
+ZM MODEL XENO - FOR NODE OS LOGIC GATE
+
+ZMXENO IS THE SECOND model of the orginal concept. More clean tight and equipped with LOGIC GATE INPUT OUT PUT FEEDS
+for Empheral caclulations on RAM level. This model is desinged to RUN NODE | OS 
+
+ZMXENO/
+├── core/
+│   ├── sacred9.js
+│   └── CarryBus.js
+├── key/
+│   ├── KeyMaker.js
+│   └── ShiftKey.js
+├── skeleton/                
+│   ├── unit1.js to unit12.js
+│   ├── unitExtensionsPush.js
+│   ├── unitExtensionsPull.js
+│   └── (all the rest)
+└── (other folders coming)
+
+ROOT/
+
+core/
+
+sacred9.js (symbol array for math proxy)
+
+// ZMXENO/core/sacred9.js
+export const SYMBOL_SEQUENCE = [
+  '⚙', '●', '○', '□', '¤', '■', '•', '¥', '◇', '▲', '♤'
+];
+
+export const VOID_SYMBOL = '⊙';
+
+morphinit.js
+
+// ZMXENO/core/morphinit.js
+import Skeleton from '../skeleton/Skeleton.js';
+import KeyMaker from '../key/KeyMaker.js';
+import ShiftKey from '../key/ShiftKey.js';
+import { S9, VOID } from './sacred9.js';
+
+export async function morphInit(value, current = 0, push = true) {
+  const vLen = value.toString().length;
+  const cLen = current.toString().length;
+
+  const skeletonVal = vLen > cLen ? value : current;
+  const keyVal = vLen > cLen ? current : value;
+
+  const skeleton = new Skeleton();
+  await skeleton.set(skeletonVal, push);
+
+  const key = new ShiftKey().shift(new KeyMaker().make(keyVal), skeleton.length);
+
+  return { skeleton, key };
+}
+
+CarryBus.js
+
+// ZMXENO/core/CarryBus.js
+export default class CarryBus {
+  constructor() {
+    this.carryValue = 0;
+    this.carryTarget = null;
+  }
+
+  registerCarry(value, target) {
+    this.carryValue = value;
+    this.carryTarget = target;
+  }
+
+  flushCarry() {
+    const carry = { carryValue: this.carryValue, carryTarget: this.carryTarget };
+    this.carryValue = 0;
+    this.carryTarget = null;
+    return carry;
+  }
+}
+
+key/
+
+KeyMaker.js
+
+// ZMXENO/key/KeyMaker.js
+import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../core/sacred9.js';
+
+export default class KeyMaker {
+  makeKey(number) {
+    const digits = number.toString().split('').map(Number);
+    const length = digits.length;
+
+    const push = Array(12).fill(null).map((_, i) => {
+      const digit = digits[i];
+      return digit !== undefined ? `U${i + 1}:${digit}` : `U${i + 1}:null`;
+    });
+
+    const view = push.map(entry =>
+      entry.includes('null')
+        ? VOID_SYMBOL
+        : SYMBOL_SEQUENCE[parseInt(entry.split(':')[1])] || VOID_SYMBOL
+    );
+
+    return { number, length, push, view };
+  }
+}
+
+shiftKey.js
+
+// ZMXENO/key/ShiftKey.js
+import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../core/sacred9.js';
+
+export default class ShiftKey {
+  shift(key, targetLength) {
+    const effectiveTarget = targetLength ?? key.length;
+
+    const newPush = Array(12).fill('null').map((_, i) => {
+      const oldIndex = i - (effectiveTarget - key.length);
+      if (oldIndex >= 0 && oldIndex < key.push.length && !key.push[oldIndex].includes('null')) {
+        const [, value] = key.push[oldIndex].split(':');
+        return `U${i + 1}:${value}`;
+      }
+      return `U${i + 1}:null`;
+    });
+
+    const newView = newPush.map(entry =>
+      entry.includes('null')
+        ? VOID_SYMBOL
+        : SYMBOL_SEQUENCE[parseInt(entry.split(':')[1])] || VOID_SYMBOL
+    );
+
+    return {
+      number: key.number,
+      length: key.length,
+      targetLength: effectiveTarget,
+      push: newPush,
+      view: newView,
+      targetUnit: `u${effectiveTarget}`
+    };
+  }
+}
+
+skeleton/ SEE GIT
+
+MORPHLOGIC/
+
+test/
