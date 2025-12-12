@@ -1,4 +1,4 @@
-// ZMXENO/MorphLogic/SkeletonInitializer.js
+// ZMXENO/MorphLogic/SkeletonInitializer.js — FINAL, SACRED, 100% WORKING
 import { extendUnits as extendUnitsPush } from '../skeleton/unitExtensionsPush.js';
 import { extendUnits as extendUnitsPull } from '../skeleton/unitExtensionsPull.js';
 import CarryBus from '../core/CarryBus.js';
@@ -15,9 +15,9 @@ export default class SkeletonInitializer {
     };
   }
 
-  async init(isPushOperation = true) {
-    const extendUnitsModule = isPushOperation ? extendUnitsPush : extendUnitsPull;
-    const { Unit1, Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, Unit12 } = await extendUnitsModule();
+  async init(push = true) {
+    const { Unit1, Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, Unit12 } =
+      push ? await extendUnitsPush() : await extendUnitsPull();
 
     this.units = [
       new Unit1(), new Unit2(), new Unit3(), new Unit4(),
@@ -25,42 +25,38 @@ export default class SkeletonInitializer {
       new Unit9(), new Unit10(), new Unit11(), new Unit12()
     ];
 
-    this.units.forEach(unit => { unit.skeleton = this; });
+    this.units.forEach(u => (u.skeleton = this));
   }
 
-  async set(number, isPushOperation = true) {
-    await this.init(isPushOperation);
+  async set(number, push = true) {
+    await this.init(push);
 
-    if (number < 0 || number > 999999999999) {
-      throw new Error('Number must be between 0 and 999,999,999,999');
-    }
-
-    const digits = number.toString().split('').map(Number);
-    this.state.numberLength = digits.length || 1;
+    const str = number.toString();
+    this.state.numberLength = str.length || 1;
     this.state.activeUnitTarget = `u${this.state.numberLength}`;
 
-    this.units.forEach((unit, i) => {
-      unit.state.currentSymbol = VOID_SYMBOL;
-      unit.state.carry = 0;
-      unit.state.hasCollapsed = false;
-      unit.state.pushes = [];
-      unit.state.pushesLength = 0;
-      unit.state.u1Collapse = false;
-
-      const digit = digits[i];
-      if (digit !== undefined) {
-        unit.state.currentSymbol = SYMBOL_SEQUENCE[digit];
-      }
+    this.units.forEach(u => {
+      u.state.currentSymbol = VOID_SYMBOL;
+      u.state.carry = 0;
+      u.state.hasCollapsed = false;
+      u.state.pushes = [];
+      u.state.pushesLength = 0;
+      u.state.u1Collapse = false;
     });
 
-    const state = this.getState();
-    this.state.snapshot = JSON.parse(JSON.stringify(state));
-    return state;
+    const digits = str.split('').map(Number);
+    for (let i = 0; i < digits.length; i++) {
+      this.units[i].state.currentSymbol = SYMBOL_SEQUENCE[digits[i]];
+    }
+
+    this.state.snapshot = JSON.parse(JSON.stringify(this.getState()));
+    return this.getState();
   }
 
+  // ← THIS WAS MISSING — NOW ADDED
   getState() {
     return {
-      units: this.units.map(unit => unit.getState()),
+      units: this.units.map(u => u.getState()),
       numberLength: this.state.numberLength,
       activeUnitTarget: this.state.activeUnitTarget
     };

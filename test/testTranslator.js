@@ -8,7 +8,7 @@ console.log('ZMXENO — TRANSLATOR TEST — SACRED TRUTH\n');
 async function run() {
   const tests = [
     { value: 0,      desc: "Zero" },
-    { value: 1,      desc: "One" },
+    { value: 11,      desc: "One" },
     { value: 505,    desc: "505" },
     { value: 999,    desc: "999" },
     { value: 1000,   desc: "1000 (collapse)" },

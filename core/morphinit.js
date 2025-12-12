@@ -4,9 +4,9 @@ import KeyMaker from '../key/KeyMaker.js';
 import ShiftKey from '../key/ShiftKey.js';
 
 export async function morphInit(value, current = 0, push = true) {
-  // In morphInit.js — top of function
-if (!value && value !== 0) value = 0;
-if (!current && current !== 0) current = 0;
+    // In morphInit.js — top of function
+  if (!value && value !== 0) value = 0;
+  if (!current && current !== 0) current = 0;
   const vLen = value.toString().length;
   const cLen = current.toString().length;
 
