@@ -1,7 +1,9 @@
 // ZMXENO/gate/phaser/phaser.js — THE SACRED OBSERVER
 import './imprintPhase.js';  // ← pulls in the phase (no export needed)
+import './modulePhase.js';
 import { skeletonToString } from '../../utils/translator.js';
 import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../../core/sacred9.js';
+
 class Phase {
   constructor() {
     this.history = [];

@@ -1,9 +1,9 @@
-// ZMXENO/gate/matrix.js — FINAL, SACRED, WORKS
-import SkeletonInitializer from '../MorphLogic/SkeletonInitializer.js';
+// ZMXENO/gate/matrix.js — CLEAN, STARTING POINT, NO EXTRA LOGIC
+import SkeletonInitializer from '../morphlogic/SkeletonInitializer.js';
+import { modulePush } from '../morphlogic/modules/modulePush.js';  // ← ONLY THIS
 import { phaser } from './phaser/phaser.js';
 import { CalcAdd13 } from './imprint.js';
 import { skeletonToNumber } from '../utils/translator.js';
-import { SYMBOL_SEQUENCE, VOID_SYMBOL } from '../core/sacred9.js';
 
 export class Matrix {
   constructor() {
@@ -27,22 +27,18 @@ export class Matrix {
     console.log(`   time    : ${new Date(CalcAdd13.timestamp).toISOString()}`);
     phaser.end();
 
-    // PHASE 3 — SKELETON
-    phaser.begin('SKELETON_INIT');
-    let skeleton = this.skeletons.get(appId);
-    if (!skeleton) {
-      skeleton = new SkeletonInitializer();
-      await skeleton.set(0, true);
-      this.skeletons.set(appId, skeleton);
-      console.log('[CHECKPOINT] Skeleton created and set to 0');
-    }
+    // PHASE 3 — MORPH PHASE START ()
+    console.log('\n[MORPH PHASE START]');
+    console.log('[MORPH] Ready for MATRIX CASCADE');
+     
+    // ONE LINE — COOKS PERFECTLY
+    await modulePush(CalcAdd13);
+    // NO SKELETON
+    // NO TRANSLATOR
+    // NO EXTRA CODE
 
-    const state = skeleton.getState();
-    const value = skeletonToNumber(state);
+    console.log('[MORPH PHASE END]\n');
 
-    console.log(`[CHECKPOINT] Initial value: ${value}`);
-    phaser.snap(skeleton).end();
-
-    return skeleton;
+    return null; // nothing yet
   }
 }

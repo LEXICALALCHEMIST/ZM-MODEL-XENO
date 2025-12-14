@@ -16,7 +16,7 @@ export function skeletonToNumber(state) {
 }
 
 // Bonus: pretty print
-export function skeletonToString(state) {
+  export function skeletonToString(state) {
   const display = state.units.map(u => u.currentSymbol).join('');
   return `<${display.slice(0,4)}|${display.slice(4,8)}|${display.slice(8,12)}>`;
 }
