@@ -1,3 +1,6 @@
+<img src="images/image.jpg" alt="ALL MIND Logo" width="200"/>
+
+
 # ZM-MODEL-XENO
 
 ZM-MODEL-XENO
